@@ -1,0 +1,229 @@
+# A simple sketchybar config for aerospace users to get started with
+# Not too different from the base starting config!
+
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+ITEM_DIR="$CONFIG_DIR/items" 
+
+#### Import Colors
+source "$CONFIG_DIR/colors.sh" # Loads all defined colors
+
+##### Bar Appearance #####
+# Configuring the general appearance of the bar.
+# These are only some of the options available. For all options see:
+# https://felixkratz.github.io/SketchyBar/config/bar
+# If you are looking for other colors, see the color picker:
+# https://felixkratz.github.io/SketchyBar/config/tricks#color-picker
+
+sketchybar --bar position=top height=38 radius=0 color=$BAR_COLOR padding_left=6 padding_right=6
+
+##### Changing Defaults #####
+# We now change some default values, which are applied to all further items.
+# For a full list of all available item properties see:
+# https://felixkratz.github.io/SketchyBar/config/items
+
+default=(
+  padding_left=4
+  padding_right=4
+  icon.font="Hack Nerd Font:Bold:14.0"
+  label.font="$TEXT_FONT"
+  icon.color=$WHITE
+  label.color=$LABEL_COLOR
+  icon.padding_left=4
+  icon.padding_right=4
+  label.padding_left=4
+  label.padding_right=4
+  background.corner_radius=10
+  background.height=28
+  updates=on
+)
+sketchybar --default "${default[@]}"
+
+##### Adding aeropsace layouts #####
+
+# Add the aerospace_workspace_change event we specified in aerospace.toml
+sketchybar --add event aerospace_workspace_change
+
+sketchybar --add item apple_logo left \
+  --set apple_logo \
+  icon="" \
+  icon.font="SF Pro:Regular:16.0" \
+  icon.y_offset=-1 \
+  icon.color=$ACCENT_COLOR \
+  label.drawing=off \
+  background.drawing=on \
+  background.color=$SPACE_BG_COLOR \
+  icon.padding_left=10 \
+  icon.padding_right=10 \
+  click_script="open -a 'System Settings'"
+
+# Add workspaces for all monitors
+for monitor in $(aerospace list-monitors --format "%{monitor-id}|%{monitor-appkit-nsscreen-screens-id}"); do
+  monitor_id=${monitor%%|*}
+  display_id=${monitor##*|}
+  for sid in $(aerospace list-workspaces --monitor "$monitor_id"); do
+    sketchybar --add item space.$sid left \
+      --set space.$sid display="$display_id" \
+      --subscribe space.$sid aerospace_workspace_change front_app_switched \
+      --set space.$sid \
+      drawing=off \
+      background.color=$SPACE_BG_COLOR \
+      background.drawing=on \
+      icon="$sid" \
+      icon.font="SF Pro:Bold:12.0" \
+      icon.color=$SPACE_ICON_COLOR \
+      icon.padding_left=10 \
+      icon.padding_right=6 \
+      icon.shadow.drawing=off \
+      label.font="$APP_FONT" \
+      label.max_chars=120 \
+      label.padding_right=12 \
+      label.padding_left=0 \
+      label.y_offset=-1 \
+      label.shadow.drawing=off \
+      label.color=$LABEL_COLOR \
+      click_script="aerospace workspace $sid" \
+      script="$CONFIG_DIR/plugins/aerospace.sh $sid"
+  done
+done
+
+##### Adding Right Items #####
+# In the same way as the left items we can add items to the right side.
+# Additional position (e.g. center) are available, see:
+# https://felixkratz.github.io/SketchyBar/config/items#adding-items-to-sketchybar
+
+# Some items refresh on a fixed cycle, e.g. the clock runs its script once
+# every 10s. Other gititems respond to events they subscribe to, e.g. the
+# volume.sh script is only executed once an actual change in system audio
+# volume is registered. More info about the event system can be found here:
+# https://felixkratz.github.io/SketchyBar/config/events
+
+sketchybar --add item clock right \
+  --set clock update_freq=10 script="$PLUGIN_DIR/clock.sh" \
+  icon.drawing=off \
+  label.color=$LABEL_COLOR \
+  label.padding_left=2 \
+  label.padding_right=10 \
+  padding_left=0 \
+  padding_right=0 \
+  --add item volume right \
+  --set volume script="$PLUGIN_DIR/volume.sh" \
+  icon.color=$DIM_LABEL_COLOR \
+  icon.padding_left=4 \
+  icon.padding_right=2 \
+  label.color=$DIM_LABEL_COLOR \
+  label.padding_left=2 \
+  label.padding_right=4 \
+  padding_left=0 \
+  padding_right=0 \
+  --subscribe volume volume_change \
+  --add item battery right \
+  --set battery update_freq=120 script="$PLUGIN_DIR/battery.sh" \
+  icon.color=$DIM_LABEL_COLOR \
+  icon.padding_left=10 \
+  icon.padding_right=2 \
+  label.color=$DIM_LABEL_COLOR \
+  label.padding_left=2 \
+  label.padding_right=4 \
+  padding_left=0 \
+  padding_right=0 \
+  --subscribe battery system_woke power_source_change
+
+sketchybar --add event github.update \
+  --add item github right \
+  --set github update_freq=180 script="$PLUGIN_DIR/github_prs.sh" \
+  click_script="sketchybar --set \$NAME popup.drawing=toggle" \
+  icon=":git_hub:" \
+  icon.font="$APP_FONT" \
+  icon.y_offset=1 \
+  icon.color=$LABEL_COLOR \
+  icon.padding_left=10 \
+  icon.padding_right=3 \
+  label="…" \
+  label.color=$LABEL_COLOR \
+  label.padding_left=2 \
+  label.padding_right=10 \
+  background.drawing=on \
+  background.color=$ITEM_BG_COLOR \
+  popup.background.color=$ITEM_BG_COLOR \
+  popup.background.corner_radius=10 \
+  popup.height=26 \
+  popup.y_offset=8 \
+  popup.align=right \
+  --subscribe github system_woke github.update \
+  --add item github.header popup.github \
+  --set github.header \
+  width=470 \
+  icon.drawing=off \
+  label="OPEN PULL REQUESTS" \
+  label.font="SF Pro:Bold:10.0" \
+  label.color=$DIM_LABEL_COLOR \
+  label.padding_left=14 \
+  label.padding_right=14 \
+  background.drawing=off \
+  --add item github.template popup.github \
+  --set github.template \
+  drawing=off \
+  width=470 \
+  icon.font="SF Pro:Bold:13.0" \
+  icon.padding_left=14 \
+  icon.padding_right=8 \
+  label.font="$TEXT_FONT" \
+  label.color=$LABEL_COLOR \
+  label.max_chars=58 \
+  label.padding_right=16 \
+  background.drawing=off
+
+sketchybar --add event agents.update \
+  --add item agents right \
+  --set agents update_freq=60 script="$PLUGIN_DIR/agents.sh" \
+  click_script="sketchybar --set \$NAME popup.drawing=toggle" \
+  icon=":claude:" \
+  icon.font="$APP_FONT" \
+  icon.y_offset=1 \
+  icon.color=$DIM_LABEL_COLOR \
+  icon.padding_left=10 \
+  icon.padding_right=3 \
+  label="…" \
+  label.color=$LABEL_COLOR \
+  label.padding_left=2 \
+  label.padding_right=10 \
+  background.drawing=on \
+  background.color=$ITEM_BG_COLOR \
+  popup.background.color=$ITEM_BG_COLOR \
+  popup.background.corner_radius=10 \
+  popup.height=26 \
+  popup.y_offset=8 \
+  popup.align=right \
+  --subscribe agents system_woke agents.update \
+  --add item agents.header popup.agents \
+  --set agents.header \
+  width=360 \
+  icon.drawing=off \
+  label="AGENTS" \
+  label.font="SF Pro:Bold:10.0" \
+  label.color=$DIM_LABEL_COLOR \
+  label.padding_left=14 \
+  label.padding_right=14 \
+  background.drawing=off \
+  --add item agents.template popup.agents \
+  --set agents.template \
+  drawing=off \
+  width=360 \
+  icon.font="SF Pro:Bold:12.0" \
+  icon.padding_left=14 \
+  icon.padding_right=8 \
+  label.font="$TEXT_FONT" \
+  label.color=$LABEL_COLOR \
+  label.max_chars=44 \
+  label.padding_right=16 \
+  background.drawing=off
+
+sketchybar --add bracket status_pill clock volume battery \
+  --set status_pill \
+  background.drawing=on \
+  background.color=$ITEM_BG_COLOR \
+  background.corner_radius=10 \
+  background.height=28
+
+##### Force all scripts to run the first time (never do this in a script) #####
+sketchybar --update
