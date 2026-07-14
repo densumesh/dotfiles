@@ -59,7 +59,7 @@ sketchybar --add item apple_logo left \
   popup.height=26 \
   popup.y_offset=8 \
   popup.align=left \
-  click_script="sketchybar --set github popup.drawing=off --set agents popup.drawing=off --set \$NAME popup.drawing=toggle"
+  click_script="$PLUGIN_DIR/popover.sh apple_logo"
 
 apple_row=(
   icon.font="Hack Nerd Font:Regular:14.0"
@@ -169,7 +169,7 @@ sketchybar --add item clock right \
 sketchybar --add event github.update \
   --add item github right \
   --set github update_freq=180 script="$PLUGIN_DIR/github_prs.sh" \
-  click_script="sketchybar --set agents popup.drawing=off --set apple_logo popup.drawing=off --set \$NAME popup.drawing=toggle" \
+  click_script="$PLUGIN_DIR/popover.sh github" \
   icon=":git_hub:" \
   icon.font="$APP_FONT" \
   icon.y_offset=1 \
@@ -214,7 +214,7 @@ sketchybar --add event github.update \
 sketchybar --add event agents.update \
   --add item agents right \
   --set agents update_freq=60 script="$PLUGIN_DIR/agents.sh" \
-  click_script="sketchybar --set github popup.drawing=off --set apple_logo popup.drawing=off --set \$NAME popup.drawing=toggle" \
+  click_script="$PLUGIN_DIR/popover.sh agents" \
   icon=":claude:" \
   icon.font="$APP_FONT" \
   icon.y_offset=1 \
@@ -253,6 +253,45 @@ sketchybar --add event agents.update \
   label.font="$TEXT_FONT" \
   label.color=$LABEL_COLOR \
   label.max_chars=44 \
+  label.padding_right=16 \
+  background.drawing=off
+
+sketchybar --add event calendar.update \
+  --add item calendar right \
+  --set calendar update_freq=60 script="$PLUGIN_DIR/calendar.sh" \
+  click_script="$PLUGIN_DIR/popover.sh calendar" \
+  icon="󰃭" \
+  icon.font="Hack Nerd Font:Regular:14.0" \
+  icon.y_offset=0 \
+  icon.color=$DIM_LABEL_COLOR \
+  icon.padding_left=10 \
+  icon.padding_right=3 \
+  label="…" \
+  label.color=$LABEL_COLOR \
+  label.padding_left=2 \
+  label.padding_right=10 \
+  background.drawing=on \
+  background.color=$ITEM_BG_COLOR \
+  popup.background.color=$ITEM_BG_COLOR \
+  popup.background.corner_radius=10 \
+  popup.height=26 \
+  popup.y_offset=8 \
+  popup.align=right \
+  --subscribe calendar system_woke calendar.update \
+  --add item calendar.template popup.calendar \
+  --set calendar.template \
+  drawing=off \
+  width=430 \
+  icon="" \
+  icon.drawing=on \
+  icon.width=30 \
+  icon.font="Hack Nerd Font:Regular:13.0" \
+  icon.padding_left=12 \
+  icon.padding_right=0 \
+  label.font="$TEXT_FONT" \
+  label.color=$LABEL_COLOR \
+  label.max_chars=54 \
+  label.padding_left=0 \
   label.padding_right=16 \
   background.drawing=off
 

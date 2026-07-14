@@ -32,7 +32,7 @@ default-root-container-orientation = 'auto'
 # Fallback value (if you omit the key): on-focused-monitor-changed = []
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center', 'exec-and-forget sketchybar --trigger aerospace_workspace_change']
 
-on-focus-changed = ['exec-and-forget sketchybar --set github popup.drawing=off --set agents popup.drawing=off --set apple_logo popup.drawing=off']
+on-focus-changed = ['exec-and-forget sketchybar --set github popup.drawing=off --set agents popup.drawing=off --set apple_logo popup.drawing=off --set calendar popup.drawing=off']
 
 exec-on-workspace-change = ['/bin/bash', '-c',
   'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE'
