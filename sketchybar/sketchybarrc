@@ -59,7 +59,7 @@ sketchybar --add item apple_logo left \
   popup.height=26 \
   popup.y_offset=8 \
   popup.align=left \
-  click_script="sketchybar --set \$NAME popup.drawing=toggle"
+  click_script="sketchybar --set github popup.drawing=off --set agents popup.drawing=off --set \$NAME popup.drawing=toggle"
 
 apple_row=(
   icon.font="Hack Nerd Font:Regular:14.0"
@@ -169,7 +169,7 @@ sketchybar --add item clock right \
 sketchybar --add event github.update \
   --add item github right \
   --set github update_freq=180 script="$PLUGIN_DIR/github_prs.sh" \
-  click_script="sketchybar --set \$NAME popup.drawing=toggle" \
+  click_script="sketchybar --set agents popup.drawing=off --set apple_logo popup.drawing=off --set \$NAME popup.drawing=toggle" \
   icon=":git_hub:" \
   icon.font="$APP_FONT" \
   icon.y_offset=1 \
@@ -214,7 +214,7 @@ sketchybar --add event github.update \
 sketchybar --add event agents.update \
   --add item agents right \
   --set agents update_freq=60 script="$PLUGIN_DIR/agents.sh" \
-  click_script="sketchybar --set \$NAME popup.drawing=toggle" \
+  click_script="sketchybar --set github popup.drawing=off --set apple_logo popup.drawing=off --set \$NAME popup.drawing=toggle" \
   icon=":claude:" \
   icon.font="$APP_FONT" \
   icon.y_offset=1 \
