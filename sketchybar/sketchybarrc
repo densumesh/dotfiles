@@ -54,7 +54,45 @@ sketchybar --add item apple_logo left \
   background.color=$SPACE_BG_COLOR \
   icon.padding_left=10 \
   icon.padding_right=10 \
-  click_script="open -a 'System Settings'"
+  popup.background.color=$ITEM_BG_COLOR \
+  popup.background.corner_radius=10 \
+  popup.height=26 \
+  popup.y_offset=8 \
+  popup.align=left \
+  click_script="sketchybar --set \$NAME popup.drawing=toggle"
+
+apple_row=(
+  icon.font="Hack Nerd Font:Regular:14.0"
+  icon.color=$LABEL_COLOR
+  icon.padding_left=14
+  icon.padding_right=8
+  label.font="$TEXT_FONT"
+  label.color=$LABEL_COLOR
+  label.padding_right=16
+  width=180
+  background.drawing=off
+)
+
+sketchybar --add item apple.prefs popup.apple_logo \
+  --set apple.prefs "${apple_row[@]}" \
+  icon="" \
+  label="Settings" \
+  click_script="open -a 'System Settings'; sketchybar --set apple_logo popup.drawing=off" \
+  --add item apple.activity popup.apple_logo \
+  --set apple.activity "${apple_row[@]}" \
+  icon="" \
+  label="Activity" \
+  click_script="open -a 'Activity Monitor'; sketchybar --set apple_logo popup.drawing=off" \
+  --add item apple.sleep popup.apple_logo \
+  --set apple.sleep "${apple_row[@]}" \
+  icon="" \
+  label="Sleep" \
+  click_script="pmset sleepnow; sketchybar --set apple_logo popup.drawing=off" \
+  --add item apple.lock popup.apple_logo \
+  --set apple.lock "${apple_row[@]}" \
+  icon="" \
+  label="Lock Screen" \
+  click_script="pmset displaysleepnow; sketchybar --set apple_logo popup.drawing=off"
 
 # Add workspaces for all monitors
 for monitor in $(aerospace list-monitors --format "%{monitor-id}|%{monitor-appkit-nsscreen-screens-id}"); do
